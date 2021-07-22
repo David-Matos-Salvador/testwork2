@@ -1,0 +1,17 @@
+.card-principal{
+    max-width: 500px;
+    margin: auto;   
+
+    .email{
+        flex: 1 1 400px;
+    }
+    .button-content{
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 10px;
+    }
+}
+
+:host ::ng-deep .mat-list-item-content {
+    justify-content: space-between;
+}
