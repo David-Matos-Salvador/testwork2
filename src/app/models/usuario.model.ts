@@ -53,3 +53,7 @@ export class Usuario {
         this.company=new Company();
     }
 }
+export class UsuarioT{
+    usuario:Usuario;
+    tipo:number;//si es 1 es modificar si es 0 es agregar
+  }

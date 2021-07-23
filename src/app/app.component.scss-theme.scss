@@ -17,6 +17,10 @@
     max-width: 500px;
     margin: auto;
   }
+  .list-item:hover{    
+    cursor: pointer;    
+    background-color:  mat-color($background,hover);
+  }
   
 }
 

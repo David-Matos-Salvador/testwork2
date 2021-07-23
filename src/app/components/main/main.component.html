@@ -3,11 +3,13 @@
     <mat-card-content>
         <mat-list>
             <div *ngFor="let usuario of usuarios; let i = index">
-                <mat-list-item>
-                    <p class="mat-h3 email"> {{usuario.email}}</p>
+                <!--  -->
+                <mat-list-item  class="list-item  " > 
+                    <a class="mat-h3 email" [routerLink]="['/detalle/', usuario.id]"><p> {{usuario.email}}</p></a>
                     <div class="button-content">
-                        <button mat-raised-button  [routerLink]="['/detalle/', usuario.id]" color="warn"> Ver detalles</button>
-                        <button mat-raised-button  color="accent"> Editar</button>
+                        <!-- <button mat-raised-button  [routerLink]="['/detalle/', usuario.id]" color="primary"> Ver <mat-icon>portrait</mat-icon></button> -->
+                        <button mat-raised-button   (click)="openModal(1,usuario)"  color="accent"> Editar <mat-icon>portrait</mat-icon> </button>
+                        <button mat-raised-button   (click)="deleteUsuario(usuario.id)"  color="warn"> <mat-icon>person_remove</mat-icon> </button>
                     </div>
                 </mat-list-item>
                 <mat-divider *ngIf="i!=usuarios.length-1"></mat-divider>
@@ -16,4 +18,7 @@
     
         </mat-list>
     </mat-card-content>
+    <button mat-fab color="primary" (click)="openModal(0)" aria-label="Example icon button with a delete icon" class="btn-regresar"> 
+        <mat-icon>person_add</mat-icon>
+    </button>
 </mat-card>

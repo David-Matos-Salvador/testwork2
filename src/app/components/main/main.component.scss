@@ -1,19 +1,27 @@
-.card-principal{  
-
-    .email{
+.card-principal {
+    position: relative;
+    a{
+        text-decoration: none;
+    }
+    .email {
         flex: 1 1 400px;
         margin: 0;
     }
-    .button-content{
+    .button-content {
         display: flex;
         flex-direction: row;
         column-gap: 10px;
     }
     mat-divider {
         border-top-color: rgb(0 0 0 / 12%);
-    }   
+    }
+    .btn-regresar {
+        position: absolute;
+        top: -20px;
+        right: -20px;
+    }
 }
- 
+
 :host ::ng-deep .mat-list-item-content {
     justify-content: space-between;
 }

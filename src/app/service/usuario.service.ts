@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Usuario } from '../models/usuario.model';
 @Injectable({
@@ -9,26 +9,20 @@ import { Usuario } from '../models/usuario.model';
 })
 export class UsuarioService {
 
-  public _usuarios: Array<Usuario> = [{
-    address: { street: "Kulas Light", suite: "Apt. 556", city: "Gwenborough", zipcode: "92998-3874", geo: { lat: 0, lng: 0 } },
-    company: { name: "Romaguera-Crona", catchPhrase: "Multi-layered client-server neural-net", bs: "harness real-time e-markets" },
-    email: "brok504@april.biz",
-    id: 1,
-    name: "Leanne Graham",
-    phone: "1-770-736-8031 x56442",
-    username: "Bret",
-    website: ''
-  }];
+  public _usuarios: Array<Usuario> = [];
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'
     })
   }
-  public _usuariosEliminados:Array<number> =[];
+  public _usuariosEliminados: Array<number> = [];
 
   constructor(private http: HttpClient) { }
+  ngOnDestroy() {
+    console.log("destrosadp")
 
+  }
   public getUsuarios(): Observable<Array<Usuario>> {
     return this.http.get<Array<Usuario>>(
       `${environment.apiUrl}users`
@@ -36,7 +30,7 @@ export class UsuarioService {
       map(usuarios => {
         return this.llenarUsuarios(usuarios)
       }
-      ),catchError(this.errorHandler)
+      ), catchError(this.errorHandler)
     );
   }
 
@@ -48,7 +42,7 @@ export class UsuarioService {
         let usuarioLocal = this._usuarios.find(usuario => usuario.id == id);
         return usuarioLocal ? usuarioLocal : usuarioBd;
       }
-      ),catchError(this.errorHandler)
+      ), catchError(this.errorHandler)
     );
   }
   public deleteUsuario(id: number) {
@@ -60,20 +54,45 @@ export class UsuarioService {
         this._usuarios = this._usuarios.filter(usuario => usuario.id != id);
         return usuarioBd;
       }
-      ),catchError(this.errorHandler)
+      ), catchError(this.errorHandler)
     );
   }
 
+  public agregarUsuario(usuarioAdd: Usuario) {
+
+    return this.http.post<Usuario>(
+      `${environment.apiUrl}users`, JSON.stringify(usuarioAdd), this.httpOptions
+    ).pipe(map((usuario) => {
+      this._usuarios.push(usuario);
+      console.log(this._usuarios)
+      return usuario;
+    }), catchError(this.errorHandler))
+
+
+    // of(this.maxValorId()).subscribe(x=>{
+    //
+    // })
+    // return of(this.maxValorId()).pipe(
+    //   switchMap((idAnterios)=> {
+    //     usuarioAdd.id=  idAnterios;
+    //     return this.http.post<Usuario>(
+    //       `${environment.apiUrl}users`, JSON.stringify(usuarioAdd), this.httpOptions
+    //     ).pipe(catchError(this.errorHandler))
+    //   }));
+
+  }
+
   public updateUsuario(usuarioUpdate: Usuario) {
+
     return this.http.put<any>(
-      `${environment.apiUrl}users/${usuarioUpdate.id}`,JSON.stringify(usuarioUpdate),this.httpOptions
+      `${environment.apiUrl}users/${usuarioUpdate.id}`, JSON.stringify(usuarioUpdate), this.httpOptions
     ).pipe(
       map(usuarioBd => {
-       let index=this._usuarios.findIndex(usuario => usuario.id != usuarioUpdate.id);
-       this._usuarios[index]=usuarioUpdate;
+        let index = this._usuarios.findIndex(usuario => usuario.id != usuarioUpdate.id);
+        this._usuarios[index] = usuarioUpdate;
         return usuarioBd;
       }
-      ),catchError(this.errorHandler)
+      ), catchError(this.errorHandler)
     );
   }
 
@@ -100,15 +119,26 @@ export class UsuarioService {
   //   return usuariosBd;
 
   // }
+
+  // llenarUsuarios(usuariosBd: Array<Usuario>) {
+  //   let ids = this._usuarios.map(usuario => usuario.id);
+  //   let usuariosNoactualizados = usuariosBd.filter(usuaribd => !ids.includes(usuaribd.id)||this._usuariosEliminados.includes(usuaribd.id))   
+  //   return usuariosNoactualizados.concat(this._usuarios).sort((a, b) => a.id - b.id)
+
+  // }
+
   llenarUsuarios(usuariosBd: Array<Usuario>) {
-    let ids = this._usuarios.map(usuario => usuario.id);
-    let usuariosNoactualizados = usuariosBd.filter(usuaribd => !ids.includes(usuaribd.id)||this._usuariosEliminados.includes(usuaribd.id))   
-    return usuariosNoactualizados.concat(this._usuarios).sort((a, b) => a.id - b.id)
+    
+    this._usuarios = this._usuarios.length > 0 ? this._usuarios : this._usuarios.concat(usuariosBd)
+    console.log(this._usuarios)
+    return this._usuarios.filter(usuario => { return !this._usuariosEliminados.includes(usuario.id) });;
 
   }
 
 
-
+  maxValorId() {
+    return of(this._usuarios.reduce((n, m) => Math.max(n, m.id), 0));
+  }
 
   errorHandler(error: any) {
     let errorMessage = '';
@@ -117,7 +147,7 @@ export class UsuarioService {
     } else {
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
-    console.error("----"+errorMessage)
+    console.error("----" + errorMessage)
     return throwError(errorMessage);
   }
 }

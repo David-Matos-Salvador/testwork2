@@ -1,0 +1,111 @@
+<mat-dialog-content>
+    <ng-container *ngIf="data.tipo==1; else elseTemplate">
+        <h1>Editar usuario</h1>
+    </ng-container>
+    <ng-template #elseTemplate>
+        <h1>Agregar usuario</h1>
+    </ng-template>
+    <form [formGroup]="userForm" (submit)="submit()" class="form-center">
+
+        <mat-form-field class="form-field" appearance="outline">
+            <mat-label> E-mail
+            </mat-label>
+            <input matInput formControlName="email" required>
+            <mat-error *ngIf="formControls.email.touched && formControls.email.invalid">
+                <span *ngIf="formControls.email.errors?.required">El email es obligatorio.</span>
+                <span *ngIf="formControls.email.errors?.email">El email es incorrecto</span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="outline">
+            <mat-label> Nombre
+            </mat-label>
+            <input matInput formControlName="name" type="text">
+            <mat-error *ngIf="formControls.name.touched && formControls.name.invalid">
+                <span *ngIf="formControls.name.errors?.required">El nombre es obligatorio.</span>
+                <span *ngIf="formControls.name.errors?.minlength">El nombre debe tener 5 dígitos como mínimo.</span>
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="outline">
+            <mat-label> Teléfono
+            </mat-label>
+            <input matInput formControlName="phone" type="text">
+        </mat-form-field>
+        <mat-form-field class="form-field" appearance="outline">
+            <mat-label> Sitio web
+            </mat-label>
+            <input matInput formControlName="website" type="text">
+            <mat-error *ngIf="formControls.website.touched && formControls.website.invalid">
+                <span *ngIf="formControls.website.errors?.pattern">La url es incorrecta.</span>
+            </mat-error>
+        </mat-form-field>
+        <div formGroupName="address">
+            <h4>Dirrecion</h4>
+            <div class="form-center">
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Ciudad
+                    </mat-label>
+                    <input matInput formControlName="city" type="text">
+                    <mat-error *ngIf="fCtrlsAdress.controls['city'].touched && fCtrlsAdress.controls['city'].invalid">
+                        <span *ngIf="!fCtrlsAdress.controls['city']?.errors?.minLength">La ciudad debe tener 4 dígitos
+                            como
+                            mínimo.</span>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Calle
+                    </mat-label>
+                    <input matInput formControlName="street" type="text">
+                    <mat-error
+                        *ngIf="fCtrlsAdress.controls['street'].touched && fCtrlsAdress.controls['street'].invalid">
+                        <span *ngIf="!fCtrlsAdress.controls['street']?.errors?.minLength">La calle debe tener 4 dígitos
+                            como
+                            mínimo.</span>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Suite
+                    </mat-label>
+                    <input matInput formControlName="suite" type="text">
+                </mat-form-field>
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Código postal
+                    </mat-label>
+                    <input matInput formControlName="zipcode" type="text">
+                </mat-form-field>
+            </div>
+        </div>
+        <div formGroupName="company">
+            <h4>Empresa</h4>
+            <div class="form-center">
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Nombre
+                    </mat-label>
+                    <input matInput formControlName="name" type="text">
+                    <mat-error *ngIf="fCtrlsCompany.controls['name'].touched && fCtrlsCompany.controls['name'].invalid">
+                        <span *ngIf="!fCtrlsCompany.controls['name']?.errors?.minLength">La ciudad debe tener 4 dígitos
+                            como mínimo.</span>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Frase
+                    </mat-label>
+                    <input matInput formControlName="catchPhrase" type="text">
+                </mat-form-field>
+                <mat-form-field class="form-field" appearance="outline">
+                    <mat-label> Puest
+                    </mat-label>
+                    <input matInput formControlName="bs" type="text">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions class="boton-modal">
+    <ng-container *ngIf="data.tipo==1; else btnTemplate">
+        <button mat-raised-button color="primary" type="submit">Actualizar</button>
+    </ng-container>
+    <ng-template #btnTemplate>
+        <button mat-raised-button color="primary" type="submit">Agregar</button>
+    </ng-template>
+    <button mat-raised-button color="warn" [mat-dialog-close]="false">Cancelar </button>
+</mat-dialog-actions>

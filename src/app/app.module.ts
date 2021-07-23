@@ -8,20 +8,26 @@ import { MainComponent } from './components/main/main.component';
 import { AngularMaterialModule } from './angular-material.module';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { DetailComponent } from './components/detail/detail.component';
+import { EdituserComponent } from './components/popups/edituser/edituser.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AlertComponent } from './components/alert/alert.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     NavigationComponent,
-    DetailComponent
+    DetailComponent,
+    EdituserComponent,
+    AlertComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule, 
     HttpClientModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

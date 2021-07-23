@@ -1,0 +1,43 @@
+<div class="card-principal blog-card" [ngClass]="{'alt': id%2==0}">
+    <div class="meta">
+        <div class="photo"
+            style="background-image: url(https://storage.googleapis.com/chydlx/codepen/blog-cards/image-1.jpg)">
+        </div>
+
+        <ul class="detalle-dirrecion">
+            <h3>Dirreción</h3>
+            <li class="datos"><span>Ciudad:</span> {{usuario.address.city}}</li>
+            <li class="datos"><span>Calle:</span> {{usuario.address.street}}</li>
+            <li class="datos"><span>Suite:</span> {{usuario.address.suite}}</li>
+            <li class="datos"><span>Código postal:</span> {{usuario.address.zipcode}}</li>
+        </ul>
+    </div>
+    <div class="description">
+        <h1> {{usuario.name}}</h1>
+        <h2 class="company-name">{{usuario.company.name}}</h2>
+        <div class="container-detalle">
+            <ul>
+                <h3>Datos del usuario</h3>
+                <li class="datos"><span>Username:</span> {{usuario.username}}</li>
+                <li class="datos"><span>Telefono:</span> {{usuario.phone}}</li>
+                <li class="datos"><span>Email:</span> {{usuario.email}}</li>
+                <li class="datos"><span>Frase empresa:</span> {{usuario.company.catchPhrase}}</li>
+                <li class="datos"><span>Puesto:</span> {{usuario.company.bs}}</li>
+          
+            </ul>
+        </div>
+        <p class="read-more">
+            <a  *ngIf="usuario.website!=''"href="https://{{usuario.website}}">Leer mas
+            </a>
+            <a  *ngIf="usuario.website==''"href="#">Leer mas
+            </a>
+            <mat-icon ia-hidden="false" aria-label="icon leer mas"><span
+                    class="material-icons-outlined">arrow_right_alt</span></mat-icon>
+        </p>
+    </div>
+ 
+    <button mat-fab color="primary"  [routerLink]="['/']" aria-label="Example icon button with a delete icon" class="btn-regresar"> 
+        <mat-icon>keyboard_return</mat-icon>
+    </button>
+
+</div>
