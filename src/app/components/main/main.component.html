@@ -1,17 +1,19 @@
 <mat-card class="card-principal">
     <mat-card-title>Correo de usuarios</mat-card-title>
-    <mat-list>
-        <div *ngFor="let usuario of usuarios; let i = index">
-            <mat-list-item>
-                <div class="mat-h3 email"> {{usuario.email}}</div>
-                <div class="button-content">
-                    <button mat-raised-button color="warn"> Editar</button>
-                    <button mat-raised-button color="accent"> Editar</button>
-                </div>
-            </mat-list-item>
-            <mat-divider *ngIf="i!=usuarios.length-1"></mat-divider>
-
-        </div>
-
-    </mat-list>
+    <mat-card-content>
+        <mat-list>
+            <div *ngFor="let usuario of usuarios; let i = index">
+                <mat-list-item>
+                    <p class="mat-h3 email"> {{usuario.email}}</p>
+                    <div class="button-content">
+                        <button mat-raised-button color="warn"> Editar</button>
+                        <button mat-raised-button color="accent"> Editar</button>
+                    </div>
+                </mat-list-item>
+                <mat-divider *ngIf="i!=usuarios.length-1"></mat-divider>
+    
+            </div>
+    
+        </mat-list>
+    </mat-card-content>
 </mat-card>

@@ -4,14 +4,19 @@
 
     .email{
         flex: 1 1 400px;
+        margin: 0;
     }
     .button-content{
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         column-gap: 10px;
     }
+    mat-divider {
+        border-top-color: rgb(0 0 0 / 12%);
+    }
+   
 }
-
+ 
 :host ::ng-deep .mat-list-item-content {
     justify-content: space-between;
 }
