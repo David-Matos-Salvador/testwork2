@@ -27,17 +27,23 @@ export class MainComponent implements OnInit {
     website: ''
   };
   ngOnInit(): void {
+    this.getUsuariosFirstTime();
     this.getUsuarios();
 
     // this.updateUsuario(this.usuario);
-    this.agregarUsuario(this.usuario);      
+    // this.agregarUsuario(this.usuario);      
+    this.deleteUsuario(2)
   }
 
 
   getUsuarios() {
-    this.usuarioService.getUsuarios().subscribe(x => {
+    this.usuarioService.usuario$.subscribe(x => {
+      console.log(x)
       this.usuarios = x;
     })
+  }
+  getUsuariosFirstTime() {
+    this.usuarioService.getUsuariosBd();
   }
 
   deleteUsuario(id: number) {
@@ -47,31 +53,29 @@ export class MainComponent implements OnInit {
     this.deleting = true;
     this.usuarioService.deleteUsuario(id).subscribe(x => {
       this._snackBar.open("!!El proceso fue existo ", "Eliminado", { duration: 1000 });
-      this.getUsuarios()
       this.deleting = false;
-    }, (error) => { this.deleting = false; },
-      () => {
-        this.deleting = false;
-      })
-
+    },
+      (error) => { this.deleting = false; },
+      () => { this.deleting = false; });
 
   }
-  agregarUsuario(usuario: Usuario){
-    this.usuarioService.maxValorId().subscribe(idUltimo=>{
-      usuario.id=idUltimo+1;
-      this.usuarioService.agregarUsuario(usuario).subscribe(x => {
-        console.log(x);
-      });
-      this.getUsuarios();
-    })
-  
-  }
 
-  updateUsuario(usuario: Usuario) {
-    this.usuarioService.updateUsuario(usuario).subscribe(x => {
-      console.log(x)
-    })
-  }
+  // agregarUsuario(usuario: Usuario){
+  //   this.usuarioService.maxValorId().subscribe(idUltimo=>{
+  //     usuario.id=idUltimo+1;
+  //     this.usuarioService.agregarUsuario(usuario).subscribe(x => {
+  //       console.log(x);
+  //     });
+  //     this.getUsuarios();
+  //   })
+
+  // }
+
+  // updateUsuario(usuario: Usuario) {
+  //   this.usuarioService.updateUsuario(usuario).subscribe(x => {
+  //     console.log(x)
+  //   })
+  // }
 
   openModal(tipo: number, usuario: Usuario = new Usuario()) {
     const modalRef = this.modal.open(EdituserComponent, {

@@ -20,11 +20,11 @@ export class DetailComponent implements OnInit {
     this.getUsuario(this.id);
   }
   getUsuario(id: number) {
-    this.usuarioService.getUsuario(id).subscribe(x => {
-      this.usuario=x;
-      console.log(this.usuario)
+    // this.usuarioService.getUsuario(id).subscribe(x => {
+    //   this.usuario=x;
+    //   console.log(this.usuario)
       
-    })
+    // })
   }
 
 }
