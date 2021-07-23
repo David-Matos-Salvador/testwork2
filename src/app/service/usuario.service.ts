@@ -7,12 +7,10 @@ import { Usuario } from '../models/usuario.model';
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService implements OnInit,OnDestroy{
+export class UsuarioService implements OnInit, OnDestroy {
 
-  public _usuariosSubjet: BehaviorSubject<Array<Usuario>> = new BehaviorSubject<Array<Usuario>>([]);
-  public _usuariosEliminadosSubjet: BehaviorSubject<Array<number>> = new BehaviorSubject<Array<number>>([]);
-  public usuario$: Observable<Array<Usuario>>;
-  public usuariosEliminados$: Observable<Array<number>>;
+  public _usuarios: Array<Usuario> = [];
+  public _usuariosEliminados: Array<number> = [];
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -21,76 +19,68 @@ export class UsuarioService implements OnInit,OnDestroy{
   }
 
   constructor(private http: HttpClient) {
-    this.usuario$ = this._usuariosSubjet.asObservable().pipe();//para no llenar memoria
-    this.usuariosEliminados$ = this._usuariosEliminadosSubjet.asObservable().pipe();
-    this.updateDatos();
-   
   }
 
   ngOnInit(): void {
-    console.log("inicio")    
-     
+    console.log("inicio")
+
   }
   ngOnDestroy() {
     console.log("destrosado")
 
   }
 
-  public addObservableUsuario(users: Array<Usuario>) {    
-    this._usuariosSubjet.next(users);
-  }
-  public addObservableUsuarioEliminado(ids: Array<number>) {
-    this._usuariosEliminadosSubjet.next(ids);
-  }
-
-
   public getUsuariosBd() {
-    this.http.get<Array<Usuario>>(
-      `${environment.apiUrl}users`
-    ).pipe(
-      catchError(this.errorHandler)
-    ).subscribe(usuarios => { this.addObservableUsuario(usuarios) });
+    if (this._usuarios.length > 0) {
+      return of(this._usuarios)
+    } else {
+      return this.http.get<Array<Usuario>>(
+        `${environment.apiUrl}users`
+      ).pipe(
+        map(usuarios => { this._usuarios = usuarios; return this._usuarios }),
+        catchError(this.errorHandler)
+      );
+    }
+
   }
 
-  // public getUsuario(id: number) {
-  //   return this.http.get<Usuario>(
-  //     `${environment.apiUrl}users/${id}`
-  //   ).pipe(
-  //     map(usuarioBd => {
-  //       let usuarioLocal = this._usuarios.find(usuario => usuario.id == id);
-  //       return usuarioLocal ? usuarioLocal : usuarioBd;
-  //     }
-  //     ), catchError(this.errorHandler)
-  //   );
-  // }
+  public getUsuario(id: number) {
+    if(id>10){
+      return of(this._usuarios.find(usuario => usuario.id == id));
+    }else{
+      return this.http.get<Usuario>(
+        `${environment.apiUrl}users/${id}`
+      ).pipe(
+        map(usuarioBd => {
+          let usuarioLocal = this._usuarios.find(usuario => usuario.id == id);
+          return usuarioLocal ? usuarioLocal : usuarioBd;
+        }
+        ), catchError(this.errorHandler)
+      );
+    }
+  }
   public deleteUsuario(id: number) {
     return this.http.delete<any>(
       `${environment.apiUrl}users/${id}`
     ).pipe(
       map(usuarioBd => {
-        this.usuariosEliminados$.subscribe(ids=>{
-          ids.push(id)          
-        this.addObservableUsuarioEliminado(ids);
-        })
-        this.usuario$.subscribe(usuarios=>{
-          let newUsuarios= usuarios.filter((usuario:Usuario)=>usuario.id!=id)
-          this.addObservableUsuario(newUsuarios);
-        })
-        return usuarioBd;
+        this._usuarios = this._usuarios.filter((usuario: Usuario) => usuario.id != id)
+        return id;
       }
       ), catchError(this.errorHandler)
     );
   }
 
-  // public agregarUsuario(usuarioAdd: Usuario) {
+  public agregarUsuario(usuarioAdd: Usuario) {
 
-  //   return this.http.post<Usuario>(
-  //     `${environment.apiUrl}users`, JSON.stringify(usuarioAdd), this.httpOptions
-  //   ).pipe(map((usuario) => {
-  //     this._usuarios.push(usuario);
-  //     console.log(this._usuarios)
-  //     return usuario;
-  //   }), catchError(this.errorHandler))
+    return this.http.post<Usuario>(
+      `${environment.apiUrl}users`, JSON.stringify(usuarioAdd), this.httpOptions
+    ).pipe(map((usuario) => {
+      usuario.id=this.maxValorId()+1;
+      this._usuarios.push(usuario);
+      console.log(this._usuarios)
+      return usuario;
+    }), catchError(this.errorHandler))
 
 
   //   // of(this.maxValorId()).subscribe(x=>{
@@ -104,21 +94,21 @@ export class UsuarioService implements OnInit,OnDestroy{
   //   //     ).pipe(catchError(this.errorHandler))
   //   //   }));
 
-  // }
+  }
 
-  // public updateUsuario(usuarioUpdate: Usuario) {
-
-  //   return this.http.put<any>(
-  //     `${environment.apiUrl}users/${usuarioUpdate.id}`, JSON.stringify(usuarioUpdate), this.httpOptions
-  //   ).pipe(
-  //     map(usuarioBd => {
-  //       let index = this._usuarios.findIndex(usuario => usuario.id != usuarioUpdate.id);
-  //       this._usuarios[index] = usuarioUpdate;
-  //       return usuarioBd;
-  //     }
-  //     ), catchError(this.errorHandler)
-  //   );
-  // }
+  public updateUsuario(usuarioUpdate: Usuario) {
+  
+    return this.http.put<any>(
+      `${environment.apiUrl}users/${usuarioUpdate.id}`, JSON.stringify(usuarioUpdate), this.httpOptions
+    ).pipe(
+      map(usuarioBd => {
+        let index = this._usuarios.findIndex(usuario => usuario.id == usuarioUpdate.id);      
+        this._usuarios[index] = usuarioUpdate;
+        return usuarioBd;
+      }
+      ), catchError(this.errorHandler)
+    );
+  }
 
 
 
@@ -151,20 +141,20 @@ export class UsuarioService implements OnInit,OnDestroy{
 
   // }
 
-  updateDatos() {
-    let usuarios: Array<Usuario> = [];
-    forkJoin(this.usuario$, this.usuariosEliminados$).subscribe((rpta) => {      
-      usuarios = rpta[0].filter((usuario:Usuario)=>!rpta[1].includes(usuario.id))    
-      console.log(usuarios)
-      this.addObservableUsuario(usuarios);
-    })
+  // updateDatos() {
+  //   let usuarios: Array<Usuario> = [];
+  //   forkJoin(this.usuario$, this.usuariosEliminados$).subscribe((rpta) => {      
+  //     usuarios = rpta[0].filter((usuario:Usuario)=>!rpta[1].includes(usuario.id))    
+  //     console.log(usuarios)
+  //     this.addObservableUsuario(usuarios);
+  //   })
 
-  }
-
-
-  // maxValorId() {
-  //   return of(this._usuarios.reduce((n, m) => Math.max(n, m.id), 0));
   // }
+
+
+  maxValorId() {
+    return this._usuarios.reduce((n, m) => Math.max(n, m.id), 0);
+  }
 
   errorHandler(error: any) {
     let errorMessage = '';

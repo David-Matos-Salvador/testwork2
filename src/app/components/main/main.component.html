@@ -9,8 +9,8 @@
                     <div class="button-content">
                         <!-- <button mat-raised-button  [routerLink]="['/detalle/', usuario.id]" color="primary"> Ver <mat-icon>portrait</mat-icon></button> -->
                         <button mat-raised-button   (click)="openModal(1,usuario)"  color="accent"> Editar <mat-icon>portrait</mat-icon> </button>
-                        <button mat-raised-button    color="warn"> <mat-icon>person_remove</mat-icon> </button>
-                        <!-- (click)="deleteUsuario(usuario.id)" -->
+                        <button mat-raised-button  (click)="deleteUsuario(usuario.id)"   color="warn"> <mat-icon>person_remove</mat-icon> </button>
+                        
                     </div>
                 </mat-list-item>
                 <mat-divider *ngIf="i!=usuarios.length-1"></mat-divider>

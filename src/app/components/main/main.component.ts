@@ -27,23 +27,25 @@ export class MainComponent implements OnInit {
     website: ''
   };
   ngOnInit(): void {
-    this.getUsuariosFirstTime();
-    this.getUsuarios();
+    this.getUsuariosBd();
+    // this.getUsuarios();
 
     // this.updateUsuario(this.usuario);
-    // this.agregarUsuario(this.usuario);      
-    this.deleteUsuario(2)
+    // this.agregarUsuario(this.usuario);
+    //this.deleteUsuario(2)
   }
 
 
-  getUsuarios() {
-    this.usuarioService.usuario$.subscribe(x => {
-      console.log(x)
-      this.usuarios = x;
+  // getUsuarios() {
+  //   this.usuarioService.usuario$.subscribe(x => {
+  //     console.log(x)
+  //     this.usuarios = x;
+  //   })
+  // }
+  getUsuariosBd() {
+    this.usuarioService.getUsuariosBd().subscribe(usuarios => {
+      this.usuarios = usuarios;
     })
-  }
-  getUsuariosFirstTime() {
-    this.usuarioService.getUsuariosBd();
   }
 
   deleteUsuario(id: number) {
@@ -52,7 +54,8 @@ export class MainComponent implements OnInit {
     }
     this.deleting = true;
     this.usuarioService.deleteUsuario(id).subscribe(x => {
-      this._snackBar.open("!!El proceso fue existo ", "Eliminado", { duration: 1000 });
+      this.getUsuariosBd();
+      this.showSnackBar("!!El proceso fue exitoso ", "Eliminado");
       this.deleting = false;
     },
       (error) => { this.deleting = false; },
@@ -60,28 +63,46 @@ export class MainComponent implements OnInit {
 
   }
 
-  // agregarUsuario(usuario: Usuario){
-  //   this.usuarioService.maxValorId().subscribe(idUltimo=>{
-  //     usuario.id=idUltimo+1;
-  //     this.usuarioService.agregarUsuario(usuario).subscribe(x => {
-  //       console.log(x);
-  //     });
-  //     this.getUsuarios();
-  //   })
+  agregarUsuario(usuario: Usuario) {
+    this.usuarioService.agregarUsuario(usuario).subscribe(x => {
+      this.showSnackBar("!!El proceso fue exitoso ", "Agregado");
+    });
+    this.getUsuariosBd();
 
-  // }
 
-  // updateUsuario(usuario: Usuario) {
-  //   this.usuarioService.updateUsuario(usuario).subscribe(x => {
-  //     console.log(x)
-  //   })
-  // }
+  }
+
+  updateUsuario(usuario: Usuario) {
+    this.usuarioService.updateUsuario(usuario).subscribe(x => {
+      this.showSnackBar("!!El proceso fue exitoso ", "Actulizado");
+    })
+  }
 
   openModal(tipo: number, usuario: Usuario = new Usuario()) {
     const modalRef = this.modal.open(EdituserComponent, {
       data: { usuario, tipo: tipo },
       disableClose: true,
     });
+    modalRef.afterClosed().subscribe(rpta => {
+      if (rpta.estado) {
+
+        if (rpta.tipo == 0) {
+          //guardar
+          console.log("gurdar")
+          this.agregarUsuario(rpta.dato);
+        }
+        else if (rpta.tipo == 1) {
+          //actualizar
+          console.log("actualizar")
+          this.updateUsuario(rpta.dato);
+        }
+      }
+    })
+  }
+
+  showSnackBar(message: string, action: string) {
+    // this._snackBar.open("!!El proceso fue existo ", "Eliminado", { duration: 1000 });
+    this._snackBar.open(message, action, { duration: 1000 });
   }
 
 

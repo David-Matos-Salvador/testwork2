@@ -18,16 +18,14 @@ export class EdituserComponent implements OnInit {
   constructor(private usuarioService: UsuarioService,public dialogoRef: MatDialogRef<EdituserComponent>, @Inject(MAT_DIALOG_DATA) public data: UsuarioT) { }
 
   ngOnInit(): void {
-    this.dialogoRef.backdropClick().subscribe(() => {
-      // Close the dialog
-      return;
-    })
+   
     this.llenarForm();
 
   }
 
   llenarForm() {
     this.userForm = new FormGroup({
+      id:  new FormControl(this.data.usuario.id),
       name: new FormControl(this.data.usuario.name, [Validators.required, Validators.minLength(5)]),
       username: new FormControl(this.data.usuario.username, [Validators.required, Validators.minLength(4)]),
       email: new FormControl(this.data.usuario.email, [Validators.required, Validators.email]),
@@ -61,8 +59,27 @@ export class EdituserComponent implements OnInit {
     console.log(this.fCtrlsAdress.controls['city'])
   }
 
-  submit() {
-    console.log(this.userForm.controls)
+  submitGuardar() {
+    this.dialogoRef.close({
+      estado: 1,
+      tipo:0,
+      dato:this.userForm.value
+    });
+  }
+  submitEditar() {
+    this.dialogoRef.close({
+      estado: 1,
+      tipo:1,
+      dato:this.userForm.value
+    });
+  }
+
+  cancelar(){
+    this.dialogoRef.close({
+      estado: 0,
+      tipo:0,
+      dato:null
+    });
   }
 
 }
