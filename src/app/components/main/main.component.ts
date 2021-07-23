@@ -23,7 +23,6 @@ export class MainComponent implements OnInit {
   };
   ngOnInit(): void {
     this.getUsuarios();
-    this.getUsuario();
     this.deleteUsuario();    
     this.updateUsuario(this.usuario);
   }
@@ -34,11 +33,7 @@ export class MainComponent implements OnInit {
       this.usuarios = x;
     })
   }
-  getUsuario() {
-    this.usuarioService.getUsuario(2).subscribe(x => {
-      console.log(x)
-    })
-  }
+  
   deleteUsuario(){
     this.usuarioService.deleteUsuario(9).subscribe(x => {
       console.log(x)

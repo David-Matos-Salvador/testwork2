@@ -13,6 +13,10 @@
   p {
     color: mat-color($foreground, text);
   }
+  .card-principal{
+    max-width: 500px;
+    margin: auto;
+  }
   
 }
 
